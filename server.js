@@ -141,21 +141,23 @@ app.get("/find/:database/:collection", async (req, res) => {
 
 
 // GET route to find a specific user
-// app.get("/retrieve-user/:database/:collection", async (req, res) => {
+// app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
 app.get("/retrieve-user/:user-id", async (req, res) => {
   try {
-    const { userId } = req.params;
-    const database = "MECAZONDB";
-    const collection = "Users";
+    const { database, collection, userId } = req.params;
+    // const {  userId } = req.params;
+    // const database = "MECAZONDB";
+    // // const collection = "Users";
     console.log("GET request received for:", { database, collection });
 
     const Model = await getModel(database, collection);
     console.log("Model retrieved, executing find query");
 
-    const documents = await Model.find({}).lean();
-    console.log("Query executed, document count:", documents.length);
+    // const documents = await Model.find({}).lean();
+    // console.log("Query executed, document count:", documents.length);
+    // console.log(documents[1]._id);
 
-    const user = documents.find((user) => user.id === userId);
+    const user = await Model.findOne({ _id: userId }).lean();
     if (user) {
       console.log(`Successfully retrieved user: ${user} with ID: ${userId}`);
     } else {
@@ -171,10 +173,42 @@ app.get("/retrieve-user/:user-id", async (req, res) => {
 
 
 
+// GET route to find a specific product
+app.get("/retrieve-user/:database/:collection/:productId", async (req, res) => {
+  // app.get("/retrieve-user/:user-id", async (req, res) => {
+  try {
+    const { database, collection, productId } = req.params;
+    // const database = "MECAZONDB";
+    // const collection = "Users";
+    console.log("GET request received for:", { database, collection });
+
+    const Model = await getModel(database, collection);
+    console.log("Model retrieved, executing find query");
+
+    // const documents = await Model.find({}).lean();
+    // console.log("Query executed, document count:", documents.length);
+    // console.log(documents[1]._id);
+
+    const product = await Model.findOne({ _id: productId }).lean();
+    if (product) {
+      console.log(`Successfully retrieved product: ${product} with ID: ${productId}`);
+    } else {
+      throw new Error(`Product with ID ${productId} not found`);
+    }
+
+    res.status(200).json(product);
+  } catch (err) {
+    console.error("Error in GET route:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 
 
 // POST route to insert documents
-app.post("/insert/:database/:collection", async (req, res) => {
+app.post("/add-user/:database/:collection", async (req, res) => {
   try {
     const { database, collection } = req.params;
     const Model = await getModel(database, collection);
@@ -207,6 +241,76 @@ app.post("/insert/:database/:collection", async (req, res) => {
 });
 
 
+// POST route to insert documents
+app.post("/add-employee/:database/:collection", async (req, res) => {
+  try {
+    const { database, collection } = req.params;
+    const Model = await getModel(database, collection);
+
+    // Check if single or multiple documents
+    if (req.body.document) {
+      // Single document insert
+      const newDocument = await Model.create(req.body.document);
+      res.status(201).json({
+        message: "Document inserted successfully",
+        insertedId: newDocument._id,
+      });
+    } else if (req.body.documents && Array.isArray(req.body.documents)) {
+      // Multiple documents insert
+      const newDocuments = await Model.insertMany(req.body.documents);
+      res.status(201).json({
+        message: `${newDocuments.length} documents inserted`,
+        insertedIds: newDocuments.map(doc => doc._id),
+      });
+    } else {
+      res.status(400).json({
+        error:
+          "Request body must contain either 'document' or 'documents' as array",
+      });
+    }
+  } catch (err) {
+    console.error("Error in POST route:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+// POST route to add a product to the user's cart
+app.post("/add-to-cart/:database/:collection/:userId/:productId", async (req, res) => {
+  try {
+    const { database, collection, userId, productId } = req.params;
+    console.log("POST request received for:", { database, collection, userId, productId });
+
+    const UserModel = await getModel(database, collection);
+    const ProductModel = await getModel("MECAZONDB", "Products");
+
+    // Retrieve the user and product documents
+    const user = await UserModel.findOne({ _id: userId }).lean();
+    const product = await ProductModel.findOne({ _id: productId }).lean();
+
+    if (!user) {
+      return res.status(404).json({ message: `User with ID ${userId} not found` });
+    }
+
+    if (!product) {
+      return res.status(404).json({ message: `Product with ID ${productId} not found` });
+    }
+
+    // Add the product to the user's cart
+    const updatedCart = user.cart || [];
+    updatedCart.push(product);
+
+    // Update the user document in the database
+    await UserModel.updateOne({ _id: userId }, { $set: { cart: updatedCart } });
+
+    res.status(200).json({ message: "Product added to cart successfully" });
+  } catch (err) {
+    console.error("Error in POST route:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 
