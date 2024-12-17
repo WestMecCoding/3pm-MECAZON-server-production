@@ -1,3 +1,7 @@
+# DevContainer environment
+.devcontainer/*.env
+.devcontainer/devcontainer.env
+
 # Logs
 logs
 *.log

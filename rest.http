@@ -1,0 +1,26 @@
+# Base URL
+@baseUrl = http://127.0.0.1:3000
+
+###
+# Test GET /find/:database/:collection
+###
+GET {{baseUrl}}/find/3pm-client-MECAZON/products
+Content-Type: application/json
+
+###
+
+###
+# Test POST /insert/:database/:collection
+###
+# Insert a single Product
+POST {{baseUrl}}/insert/3pm-client-MECAZON/products
+Content-Type: application/json
+
+{
+    "document": {
+        "name": "Apple",
+        "price": 1.99
+    }
+}
+
+###

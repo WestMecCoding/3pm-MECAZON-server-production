@@ -1,0 +1,22 @@
+{
+  "note": "This goes in /.devcontainer/devcontainer.json",
+  "name": "MECAZON-server",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:0-focal",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "humao.rest-client"]
+    }
+  },
+  "forwardPorts": [3000],
+  "remoteEnv": {
+    "MONGO_CLIENT_URI": "${localEnv:MONGO_PROD_CLIENT_URI}",
+    "MONGO_SERVER_URI": "${localEnv:MONGO_PROD_SERVER_URI}"
+  },
+  "postCreateCommand": "bash -c 'npm install && echo \"MONGO_CLIENT_URI=${MONGO_CLIENT_URI}\nMONGO_SERVER_URI=${MONGO_SERVER_URI}\" > .devcontainer/devcontainer.env'",
+  "shutdownAction": "none"
+}
