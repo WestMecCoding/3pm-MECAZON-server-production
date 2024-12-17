@@ -4,7 +4,20 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 // Load environment variables
-dotenv.config({ path: "./.env.production" });
+dotenv.config({
+  path: path.join(__dirname, ".devcontainer", "devcontainer.env"),
+});
+console.log("Current working directory:", process.cwd());
+console.log(
+  "Attempting to load env from:",
+  `${process.cwd()}/.devcontainer/devcontainer.env`
+);
+console.log(
+  "Env loading result:",
+  dotenv.config({
+    path: "./.devcontainer/devcontainer.env",
+  })
+);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
