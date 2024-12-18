@@ -106,6 +106,27 @@ const getModel = async (dbName, collectionName) => {
 
 // Routes
 
+
+
+
+
+
+
+
+
+
+
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Endpoint to serve the employee hub HTML file
+app.get('/employee-hub', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'employee-hub.html'));
+});
+
+
+
 // GET route to find documents in a collection
 app.get("/find/:database/:collection", async (req, res) => {
   try {
@@ -376,51 +397,46 @@ app.post("/add-employee/:database/:collection", async (req, res) => {
 //   }
 // );
 
-
 // POST route to ada an order to the users profile
-app.post(
-  "/checkout-order/:database/:collection/:userId/",
-  async (req, res) => {
-    try {
-      const { database, collection, userId } = req.params;
-      const {order} = req.body;
-      console.log("POST request received for:", {
-        database,
-        collection,
-        userId,
-      });
+app.post("/checkout-order/:database/:collection/:userId/", async (req, res) => {
+  try {
+    const { database, collection, userId } = req.params;
+    const { order } = req.body;
+    console.log("POST request received for:", {
+      database,
+      collection,
+      userId,
+    });
 
-      const UserModel = await getModel(database, collection);
+    const UserModel = await getModel(database, collection);
 
-      // Retrieve the user
-      const user = await UserModel.findOne({ _id: userId }).lean();
+    // Retrieve the user
+    const user = await UserModel.findOne({ _id: userId }).lean();
 
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: `User with ID ${userId} not found` });
-      }
-
-      // Add the order to the user's profile
-      const updatedOrders = user.orders || [];
-      updatedOrders.push(order);
-
-      // Update the user document in the database
-      await UserModel.updateOne(
-        { _id: userId },
-        { $set: { orders: updatedOrders } }
-      );
-
-      res.status(200).json({ message: "Order added to user profile successfully" });
-    } catch (err) {
-      console.error("Error in POST route:", err);
-      res.status(500).json({ error: err.message });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: `User with ID ${userId} not found` });
     }
+
+    // Add the order to the user's profile
+    const updatedOrders = user.orders || [];
+    updatedOrders.push(order);
+
+    // Update the user document in the database
+    await UserModel.updateOne(
+      { _id: userId },
+      { $set: { orders: updatedOrders } }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Order added to user profile successfully" });
+  } catch (err) {
+    console.error("Error in POST route:", err);
+    res.status(500).json({ error: err.message });
   }
-);
-
-
-
+});
 
 // DELETE route to remove a document by ID
 app.delete("/delete/:database/:collection/:id", async (req, res) => {

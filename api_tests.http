@@ -61,6 +61,28 @@ Content-Type: application/json
     }
 }
 
+
+###
+# Insert employees
+POST {{baseUrl}}/add-employee/3pm-server-MECAZON/employees
+Content-Type: application/json
+
+{
+    "document": {
+        "username": "Admin",
+        "name.first_name": "Bob",
+        "name.last_name": "Bartholomew III Senior",
+        "password": "admin",
+        "department": "CEO",
+        "employment_type": "full-time",
+        "isAdmin": "true",
+        "contact_info.email": "west-mecadmin@gmail.com",
+        "contact_info.phone_number": "123-456-789",
+        "contact_info.address": "5632 W Mecazon Dr Glendale AZ"
+    }
+}
+
+
 ###
 # Insert a single Product
 POST {{baseUrl}}/insert/3pm-server-MECAZON/employees
@@ -161,7 +183,7 @@ Content-Type: application/json
 }
 
 ###
-@product_id=676203e8f6d38ba15288a1b0
+@id=6758d8878864ab2bdfc6b46e
 # Delete a User (Replace {user_id} with an actual ID)
-DELETE {{baseUrl}}/delete/3pm-client-MECAZON/products/{{product_id}}
+DELETE {{baseUrl}}/delete/3pm-server-MECAZON/employees/{{id}}
 Content-Type: application/json
