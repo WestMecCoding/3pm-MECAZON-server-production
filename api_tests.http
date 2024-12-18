@@ -16,7 +16,7 @@ Content-Type: application/json
 
 
 ###
-@userId = 6762122c98aa42a8912e4107
+@userId = 676275aad22c1d046d2fe5ef
 
 GET {{baseUrl}}/retrieve-user/3pm-server-MECAZON/users/{{userId}}
 Content-Type: application/json
@@ -188,7 +188,7 @@ Content-Type: application/json
 }
 
 ###
-@id=67625a7e72aaa9c016896b05
+@id=676275579fb0c8232d42c60f
 # Delete a User (Replace {user_id} with an actual ID)
 DELETE {{baseUrl}}/delete/3pm-server-MECAZON/users/{{id}}
 Content-Type: application/json
