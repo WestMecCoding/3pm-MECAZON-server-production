@@ -85,13 +85,18 @@ Content-Type: application/json
 
 ###
 # Insert a single Product
-POST {{baseUrl}}/insert/3pm-server-MECAZON/employees
+POST {{baseUrl}}/insert/3pm-client-MECAZON/products
 Content-Type: application/json
 
 {
     "document": {
-        "name": "Apple",
-        "price": 1.99
+        "item": "Backpack",
+        "category": "Educational Supplies",
+        "price_in_usd": 38,
+        "details": "JanSport student backpack solid black, two large compartments",
+        "product_img": "https://drive.google.com/file/d/1B7u-3AzklqIB_6NIvdJ0xhuuRxMSXPtk/view?usp=drive_link",
+        "__v": 0,
+        "colorArr": ["red", "white", "blue", "green"]
     }
 }
 
@@ -183,7 +188,7 @@ Content-Type: application/json
 }
 
 ###
-@id=6758d8878864ab2bdfc6b46e
+@id=676210b991082b735a40df94
 # Delete a User (Replace {user_id} with an actual ID)
-DELETE {{baseUrl}}/delete/3pm-server-MECAZON/employees/{{id}}
+DELETE {{baseUrl}}/delete/3pm-client-MECAZON/products/{{id}}
 Content-Type: application/json

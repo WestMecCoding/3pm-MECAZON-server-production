@@ -57,6 +57,10 @@ const employeeSchema = new mongoose.Schema(
         trim: true,
       },
     },
+    orders: {
+      type: Array,
+      trim: true,
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

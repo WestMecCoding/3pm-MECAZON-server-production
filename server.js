@@ -31,7 +31,6 @@ app.use(express.json()); // To parse JSON bodies
 const productSchema = require("./models/Products");
 const userSchema = require("./models/Users");
 const employeeSchema = require("./models/Employees");
-const { hash } = require("crypto");
 
 // Mapping of database names to their respective URIs
 const uriMap = {
@@ -106,17 +105,6 @@ const getModel = async (dbName, collectionName) => {
 
 // Routes
 
-
-
-
-
-
-
-
-
-
-
-
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -126,7 +114,7 @@ app.get('/employee-hub', (req, res) => {
 });
 
 
-
+// used for testing
 // GET route to find documents in a collection
 app.get("/find/:database/:collection", async (req, res) => {
   try {
@@ -146,24 +134,30 @@ app.get("/find/:database/:collection", async (req, res) => {
   }
 });
 
+// used for testing
 // GET route to find a specific user using id
 app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
-  // app.get("/retrieve-user/:user-id", async (req, res) => {
   try {
     const { database, collection, userId } = req.params;
-    console.log("GET request received for:", { database, collection });
+    console.log("GET request received for:", { database, collection, userId });
 
     const Model = await getModel(database, collection);
     console.log("Model retrieved, executing find query");
 
-    const user = await Model.findOne({ _id: userId }).lean();
-    if (user) {
-      console.log(`Successfully retrieved user: ${user} with ID: ${userId}`);
-    } else {
-      throw new Error(`User with ID ${userId} not found`);
+    let user = await Model.findOne({ _id: userId }).lean();
+    if (!user) {
+      console.log(`User not found in ${collection}, searching in the other collection`);
+      const otherCollection = collection === 'users' ? 'employee' : 'users';
+      const OtherModel = await getModel(database, otherCollection);
+      user = await OtherModel.findOne({ _id: userId }).lean();
     }
 
-    res.status(200).json(user);
+    if (user) {
+      console.log(`Successfully retrieved user: ${user} with ID: ${userId}`);
+      res.status(200).json(user);
+    } else {
+      throw new Error(`User with ID ${userId} not found in both collections`);
+    }
   } catch (err) {
     console.error("Error in GET route:", err);
     res.status(500).json({ error: err.message });
@@ -253,6 +247,7 @@ app.post("/sign-up/:database/:collection", async (req, res) => {
   }
 });
 
+// used for testing
 // GET route to find a specific product
 app.get(
   "/retrieve-product/:database/:collection/:productId",
@@ -281,6 +276,7 @@ app.get(
   }
 );
 
+//used for testing
 // POST route to insert documents
 app.post("/add-user/:database/:collection", async (req, res) => {
   try {
@@ -438,6 +434,7 @@ app.post("/checkout-order/:database/:collection/:userId/", async (req, res) => {
   }
 });
 
+// used for testing
 // DELETE route to remove a document by ID
 app.delete("/delete/:database/:collection/:id", async (req, res) => {
   try {
@@ -485,6 +482,9 @@ app.put("/update/:database/:collection/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
 
 // Test connections before starting server
 async function startServer() {
