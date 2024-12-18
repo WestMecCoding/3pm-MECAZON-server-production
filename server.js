@@ -147,7 +147,7 @@ app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
     let user = await Model.findOne({ _id: userId }).lean();
     if (!user) {
       console.log(`User not found in ${collection}, searching in the other collection`);
-      const otherCollection = collection === 'users' ? 'employee' : 'users';
+      const otherCollection = collection === 'users' ? 'employees' : 'users';
       const OtherModel = await getModel(database, otherCollection);
       user = await OtherModel.findOne({ _id: userId }).lean();
     }
