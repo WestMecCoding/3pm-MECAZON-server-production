@@ -4,48 +4,51 @@
 ###
 # Test GET /find/:database/:collection
 ###
-GET {{baseUrl}}/find/ProductsDB/Products
+GET {{baseUrl}}/find/productsDB/products
 Content-Type: application/json
 
 ###
 
-GET {{baseUrl}}/find/UsersEmployeesDB/Users
+GET {{baseUrl}}/find/usersemployeesDB/users
 Content-Type: application/json
 
 ###
 
-GET {{baseUrl}}/find/UsersEmployeesDB/Employees
+GET {{baseUrl}}/find/usersemployeesDB/employees
 Content-Type: application/json
 
 ###
 # ***************************************************** TEST FOR TEAM C ************************************************************
-GET {{baseUrl}}/find/MECAZONDB/Users
+GET {{baseUrl}}/find/3pm-server-MECAZON/users
 Content-Type: application/json
 
 ###
-GET {{baseUrl}}/find/MECAZONDB/Employees
+GET {{baseUrl}}/find/3pm-server-MECAZON/employees
+Content-Type: application/json
+
+###
+GET {{baseUrl}}/find/3pm-client-MECAZON/products
 Content-Type: application/json
 
 
 ###
-@userId = 6760b95f377b1540a18a9713
+@userId = 6762122c98aa42a8912e4107
 # GET {{baseUrl}}/retrieve-user/{{userId}}
 # Content-Type: application/json
 
-GET {{baseUrl}}/retrieve-user/MECAZONDB/Users/{{userId}}
+GET {{baseUrl}}/retrieve-user/3pm-server-MECAZON/users/{{userId}}
 Content-Type: application/json
 
 
 ###
-# @userId = 6760b95f377b1540a18a9713
 @productId = 6761fbf603d52a12492388b4
 
-POST {{baseUrl}}/add-to-cart/MECAZONDB/Users/{{userId}}/{{productId}}
+POST {{baseUrl}}/add-to-cart/3pm-server-MECAZON/users/{{userId}}/{{productId}}
 Content-Type: application/json
 
 ###
 # Insert a single Product
-POST {{baseUrl}}/insert/MECAZONDB/Users
+POST {{baseUrl}}/insert/3pm-server-MECAZON/users
 Content-Type: application/json
 
 {
@@ -57,26 +60,29 @@ Content-Type: application/json
 
 ###
 
-# Insert multiple Users
-POST {{baseUrl}}/insert/MECAZONDB/Users
+# Insert users
+POST {{baseUrl}}/add-user/3pm-server-MECAZON/users
 Content-Type: application/json
 
 {
-    "documents": [
-        {
-            "username": "jane_doe",
-            "email": "jane@example.com"
-        },
-        {
-            "username": "john_smith",
-            "email": "john@example.com"
-        }
-    ]
+    "document": {
+        "name.first_name": "test",
+        "name.last_name": "test",
+        "location.country": "United States",
+        "location.city": "",
+        "location.address": "",
+        "location.zip_code": "",
+        "contact_info.email": "west-mecsantiago@gmail.com",
+        "contact_info.phone_number": "000-000-0000",
+        "password": "toolet",
+        "orders": ["keyboard", "mouse", "sticky notes"],
+        "payment_type": ""
+    }
 }
 
 ###
 # Insert a single Product
-POST {{baseUrl}}/insert/MECAZONDB/Employees
+POST {{baseUrl}}/insert/3pm-server-MECAZON/employees
 Content-Type: application/json
 
 {
@@ -88,8 +94,8 @@ Content-Type: application/json
 
 ###
 
-# Insert multiple Users
-POST {{baseUrl}}/insert/MECAZONDB/Employees
+# Insert multiple users
+POST {{baseUrl}}/insert/3pm-server-MECAZON/employees
 Content-Type: application/json
 
 {
@@ -111,13 +117,13 @@ Content-Type: application/json
 # Test DELETE /delete/:database/:collection/:id
 ###
 # Delete a User (Replace {user_id} with an actual ID)
-DELETE {{baseUrl}}/delete/MECAZONDB/Users/{user_id}
+DELETE {{baseUrl}}/delete/3pm-server-MECAZON/users/{user_id}
 Content-Type: application/json
 
 
 ###
 # Delete a User (Replace {user_id} with an actual ID)
-DELETE {{baseUrl}}/delete/MECAZONDB/Employees/{user_id}
+DELETE {{baseUrl}}/delete/3pm-server-MECAZON/employees/{user_id}
 Content-Type: application/json
 
 
@@ -129,7 +135,7 @@ Content-Type: application/json
 # Test POST /insert/:database/:collection
 ###
 # Insert a single Product
-POST {{baseUrl}}/insert/ProductsDB/Products
+POST {{baseUrl}}/insert/productsDB/products
 Content-Type: application/json
 
 {
@@ -141,8 +147,8 @@ Content-Type: application/json
 
 ###
 
-# Insert multiple Users
-POST {{baseUrl}}/insert/UsersEmployeesDB/Users
+# Insert multiple users
+POST {{baseUrl}}/insert/usersemployeesDB/users
 Content-Type: application/json
 
 {
@@ -164,7 +170,7 @@ Content-Type: application/json
 # Test PUT /update/:database/:collection/:id
 ###
 # Update a Product (Replace {product_id} with an actual ID)
-PUT {{baseUrl}}/update/ProductsDB/Products/{product_id}
+PUT {{baseUrl}}/update/productsDB/products/{product_id}
 Content-Type: application/json
 
 {
@@ -179,7 +185,7 @@ Content-Type: application/json
 # Test DELETE /delete/:database/:collection/:id
 ###
 # Delete a User (Replace {user_id} with an actual ID)
-DELETE {{baseUrl}}/delete/UsersEmployeesDB/Users/{user_id}
+DELETE {{baseUrl}}/delete/usersemployeesDB/users/{user_id}
 Content-Type: application/json
 
 ###
