@@ -108,23 +108,23 @@ const getModel = async (dbName, collectionName) => {
 // Routes
 
 // GET route to find documents in a collection
-// app.get("/find/:database/:collection", async (req, res) => {
-//   try {
-//     const { database, collection } = req.params;
-//     console.log("GET request received for:", { database, collection });
+app.get("/find/:database/:collection", async (req, res) => {
+  try {
+    const { database, collection } = req.params;
+    console.log("GET request received for:", { database, collection });
 
-//     const Model = await getModel(database, collection);
-//     console.log("Model retrieved, executing find query");
+    const Model = await getModel(database, collection);
+    console.log("Model retrieved, executing find query");
 
-//     const documents = await Model.find({}).lean();
-//     console.log("Query executed, document count:", documents.length);
+    const documents = await Model.find({}).lean();
+    console.log("Query executed, document count:", documents.length);
 
-//     res.status(200).json(documents);
-//   } catch (err) {
-//     console.error("Error in GET route:", err);
-//     res.status(500).json({ error: err.message });
-//   }
-// });
+    res.status(200).json(documents);
+  } catch (err) {
+    console.error("Error in GET route:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // GET route to find a specific user using id
 app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
@@ -169,7 +169,7 @@ app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
     console.log("Model retrieved, executing find query");
 
     const user = await Model.findOne({
-      email: email,
+      "contact_info.email": email,
       password: password,
     }).lean();
     if (user) {
@@ -182,6 +182,27 @@ app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
     }
   } catch (err) {
     console.error("Error in GET route:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/sign-up/:database/:collection", async (req, res) => {
+  try {
+    const { database, collection } = req.params;
+    const { email, password, name } = req.body; // Assuming the user details include email, password, and name
+
+    console.log("POST request received for:", { database, collection, email });
+
+    const Model = await getModel(database, collection);
+    console.log("Model retrieved, executing save query");
+
+    const newUser = new Model({ email, password, name });
+    await newUser.save();
+
+    console.log(`Successfully created user: ${newUser} with email: ${email}`);
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error("Error in POST route:", err);
     res.status(500).json({ error: err.message });
   }
 });
