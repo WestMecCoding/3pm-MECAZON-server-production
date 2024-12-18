@@ -211,7 +211,7 @@ app.post("/sign-up/:database/:collection", async (req, res) => {
     }
 
     const newUser = new Model({
-      username,
+      username: username,
       name: {
         first_name: null,
         last_name: null,
@@ -226,7 +226,7 @@ app.post("/sign-up/:database/:collection", async (req, res) => {
         email: email,
         phone_number: null,
       },
-      password,
+      password: password,
       orders: [],
       payment_type: null,
       createdAt: new Date(),
