@@ -185,7 +185,7 @@ app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
 app.post("/sign-up/:database/:collection", async (req, res) => {
   try {
     const { database, collection } = req.params;
-    const { username, email, password } = req.body;
+    const { username, contact_info, password } = req.body;
 
     console.log("POST request received for:", { database, collection, email });
 
