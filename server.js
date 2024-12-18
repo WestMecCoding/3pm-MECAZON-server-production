@@ -105,15 +105,6 @@ const getModel = async (dbName, collectionName) => {
 
 // Routes
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Endpoint to serve the employee hub HTML file
-app.get('/employee-hub', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'employee-hub.html'));
-});
-
-
 // used for testing
 // GET route to find documents in a collection
 app.get("/find/:database/:collection", async (req, res) => {
@@ -433,6 +424,9 @@ app.post("/checkout-order/:database/:collection/:userId/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
 
 // used for testing
 // DELETE route to remove a document by ID
