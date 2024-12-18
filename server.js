@@ -194,7 +194,7 @@ app.post("/sign-up/:database/:collection", async (req, res) => {
 
     // Check if a user with the same email already exists
     const existingUser = await Model.findOne({
-      "contact_info.email": email,
+      "contact_info.email": contact_info.email,
     }).lean();
     if (existingUser) {
       throw new Error(`User with email ${email} already exists`);
