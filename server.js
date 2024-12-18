@@ -29,8 +29,8 @@ app.use(express.json()); // To parse JSON bodies
 
 // Import Schemas
 const productSchema = require("./models/Products");
-const userSchema = require('./models/Users');
-const employeeSchema = require('./models/Employees');
+const userSchema = require("./models/Users");
+const employeeSchema = require("./models/Employees");
 const { hash } = require("crypto");
 
 // Mapping of database names to their respective URIs
@@ -45,7 +45,7 @@ const connections = {};
 const models = {};
 
 // Function to get or create a connection based on the database name
-const getConnection = async dbName => {
+const getConnection = async (dbName) => {
   console.log("getConnection called with dbName:", dbName);
 
   if (!uriMap[dbName]) {
@@ -105,51 +105,32 @@ const getModel = async (dbName, collectionName) => {
   return models[modelKey];
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Routes
 
 // GET route to find documents in a collection
-app.get("/find/:database/:collection", async (req, res) => {
-  try {
-    const { database, collection } = req.params;
-    console.log("GET request received for:", { database, collection });
+// app.get("/find/:database/:collection", async (req, res) => {
+//   try {
+//     const { database, collection } = req.params;
+//     console.log("GET request received for:", { database, collection });
 
-    const Model = await getModel(database, collection);
-    console.log("Model retrieved, executing find query");
+//     const Model = await getModel(database, collection);
+//     console.log("Model retrieved, executing find query");
 
-    const documents = await Model.find({}).lean();
-    console.log("Query executed, document count:", documents.length);
+//     const documents = await Model.find({}).lean();
+//     console.log("Query executed, document count:", documents.length);
 
-    res.status(200).json(documents);
-  } catch (err) {
-    console.error("Error in GET route:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
+//     res.status(200).json(documents);
+//   } catch (err) {
+//     console.error("Error in GET route:", err);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
-
-// GET route to find a specific user
+// GET route to find a specific user using id
 app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
-// app.get("/retrieve-user/:user-id", async (req, res) => {
+  // app.get("/retrieve-user/:user-id", async (req, res) => {
   try {
     const { database, collection, userId } = req.params;
-    // const {  userId } = req.params;
-    // const database = "MECAZONDB";
-    // // const collection = "Users";
     console.log("GET request received for:", { database, collection });
 
     const Model = await getModel(database, collection);
@@ -173,41 +154,72 @@ app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
   }
 });
 
-
-
-// GET route to find a specific product
-app.get("/retrieve-product/:database/:collection/:productId", async (req, res) => {
-  // app.get("/retrieve-user/:user-id", async (req, res) => {
+// GET route to find a specific user using email and password
+app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
   try {
-    const { database, collection, productId } = req.params;
-    // const database = "MECAZONDB";
-    // const collection = "Users";
-    console.log("GET request received for:", { database, collection });
+    const { database, collection, email, password } = req.params;
+    console.log("GET request received for:", {
+      database,
+      collection,
+      email,
+      password,
+    });
 
     const Model = await getModel(database, collection);
     console.log("Model retrieved, executing find query");
 
-    // const documents = await Model.find({}).lean();
-    // console.log("Query executed, document count:", documents.length);
-    // console.log(documents[1]._id);
-
-    const product = await Model.findOne({ _id: productId }).lean();
-    if (product) {
-      console.log(`Successfully retrieved product: ${product} with ID: ${productId}`);
+    const user = await Model.findOne({
+      email: email,
+      password: password,
+    }).lean();
+    if (user) {
+      console.log(`Successfully retrieved user: ${user} with email: ${email}`);
+      res.status(200).json(user);
     } else {
-      throw new Error(`Product with ID ${productId} not found`);
+      throw new Error(
+        `User with email ${email} not found or password is incorrect`
+      );
     }
-
-    res.status(200).json(product);
   } catch (err) {
     console.error("Error in GET route:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
+// GET route to find a specific product
+app.get(
+  "/retrieve-product/:database/:collection/:productId",
+  async (req, res) => {
+    // app.get("/retrieve-user/:user-id", async (req, res) => {
+    try {
+      const { database, collection, productId } = req.params;
+      // const database = "MECAZONDB";
+      // const collection = "Users";
+      console.log("GET request received for:", { database, collection });
 
+      const Model = await getModel(database, collection);
+      console.log("Model retrieved, executing find query");
 
+      // const documents = await Model.find({}).lean();
+      // console.log("Query executed, document count:", documents.length);
+      // console.log(documents[1]._id);
 
+      const product = await Model.findOne({ _id: productId }).lean();
+      if (product) {
+        console.log(
+          `Successfully retrieved product: ${product} with ID: ${productId}`
+        );
+      } else {
+        throw new Error(`Product with ID ${productId} not found`);
+      }
+
+      res.status(200).json(product);
+    } catch (err) {
+      console.error("Error in GET route:", err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
 
 // POST route to insert documents
 app.post("/add-user/:database/:collection", async (req, res) => {
@@ -228,7 +240,7 @@ app.post("/add-user/:database/:collection", async (req, res) => {
       const newDocuments = await Model.insertMany(req.body.documents);
       res.status(201).json({
         message: `${newDocuments.length} documents inserted`,
-        insertedIds: newDocuments.map(doc => doc._id),
+        insertedIds: newDocuments.map((doc) => doc._id),
       });
     } else {
       res.status(400).json({
@@ -241,7 +253,6 @@ app.post("/add-user/:database/:collection", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // POST route to insert documents
 app.post("/add-employee/:database/:collection", async (req, res) => {
@@ -262,7 +273,7 @@ app.post("/add-employee/:database/:collection", async (req, res) => {
       const newDocuments = await Model.insertMany(req.body.documents);
       res.status(201).json({
         message: `${newDocuments.length} documents inserted`,
-        insertedIds: newDocuments.map(doc => doc._id),
+        insertedIds: newDocuments.map((doc) => doc._id),
       });
     } else {
       res.status(400).json({
@@ -276,48 +287,55 @@ app.post("/add-employee/:database/:collection", async (req, res) => {
   }
 });
 
-
-
-
 // POST route to add a product to the user's cart
-app.post("/add-to-cart/:database/:collection/:userId/:productId", async (req, res) => {
-  try {
-    const { database, collection, userId, productId } = req.params;
-    console.log("POST request received for:", { database, collection, userId, productId });
+app.post(
+  "/add-to-cart/:database/:collection/:userId/:productId",
+  async (req, res) => {
+    try {
+      const { database, collection, userId, productId } = req.params;
+      console.log("POST request received for:", {
+        database,
+        collection,
+        userId,
+        productId,
+      });
 
-    const UserModel = await getModel(database, collection);
-    const ProductModel = await getModel("MECAZONDB", "Products");
+      const UserModel = await getModel(database, collection);
+      const ProductModel = await getModel("MECAZONDB", "Products");
 
-    // Retrieve the user and product documents
-    const user = await UserModel.findOne({ _id: userId }).lean();
-    const product = await ProductModel.findOne({ _id: productId }).lean();
+      // Retrieve the user and product documents
+      const user = await UserModel.findOne({ _id: userId }).lean();
+      const product = await ProductModel.findOne({ _id: productId }).lean();
 
-    if (!user) {
-      return res.status(404).json({ message: `User with ID ${userId} not found` });
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: `User with ID ${userId} not found` });
+      }
+
+      if (!product) {
+        return res
+          .status(404)
+          .json({ message: `Product with ID ${productId} not found` });
+      }
+
+      // Add the product to the user's cart
+      const updatedCart = user.cart || [];
+      updatedCart.push(product);
+
+      // Update the user document in the database
+      await UserModel.updateOne(
+        { _id: userId },
+        { $set: { cart: updatedCart } }
+      );
+
+      res.status(200).json({ message: "Product added to cart successfully" });
+    } catch (err) {
+      console.error("Error in POST route:", err);
+      res.status(500).json({ error: err.message });
     }
-
-    if (!product) {
-      return res.status(404).json({ message: `Product with ID ${productId} not found` });
-    }
-
-    // Add the product to the user's cart
-    const updatedCart = user.cart || [];
-    updatedCart.push(product);
-
-    // Update the user document in the database
-    await UserModel.updateOne({ _id: userId }, { $set: { cart: updatedCart } });
-
-    res.status(200).json({ message: "Product added to cart successfully" });
-  } catch (err) {
-    console.error("Error in POST route:", err);
-    res.status(500).json({ error: err.message });
   }
-});
-
-
-
-
-
+);
 
 // DELETE route to remove a document by ID
 app.delete("/delete/:database/:collection/:id", async (req, res) => {
@@ -335,14 +353,6 @@ app.delete("/delete/:database/:collection/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-
-
-
-
-
-
-
 
 // PUT route to update a document by ID
 app.put("/update/:database/:collection/:id", async (req, res) => {

@@ -2,22 +2,6 @@
 @baseUrl = http://localhost:3000
 
 ###
-# Test GET /find/:database/:collection
-###
-GET {{baseUrl}}/find/productsDB/products
-Content-Type: application/json
-
-###
-
-GET {{baseUrl}}/find/usersemployeesDB/users
-Content-Type: application/json
-
-###
-
-GET {{baseUrl}}/find/usersemployeesDB/employees
-Content-Type: application/json
-
-###
 # ***************************************************** TEST FOR TEAM C ************************************************************
 GET {{baseUrl}}/find/3pm-server-MECAZON/users
 Content-Type: application/json
@@ -33,12 +17,9 @@ Content-Type: application/json
 
 ###
 @userId = 6762122c98aa42a8912e4107
-# GET {{baseUrl}}/retrieve-user/{{userId}}
-# Content-Type: application/json
 
 GET {{baseUrl}}/retrieve-user/3pm-server-MECAZON/users/{{userId}}
 Content-Type: application/json
-
 
 ###
 @productId = 6761fbf603d52a12492388b4
@@ -180,12 +161,7 @@ Content-Type: application/json
 }
 
 ###
-
-###
-# Test DELETE /delete/:database/:collection/:id
-###
+@product_id=676203e8f6d38ba15288a1b0
 # Delete a User (Replace {user_id} with an actual ID)
-DELETE {{baseUrl}}/delete/usersemployeesDB/users/{user_id}
+DELETE {{baseUrl}}/delete/3pm-client-MECAZON/products/{{product_id}}
 Content-Type: application/json
-
-###
