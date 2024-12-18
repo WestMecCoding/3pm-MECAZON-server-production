@@ -202,8 +202,23 @@ app.post("/sign-up/:database/:collection", async (req, res) => {
 
     const newUser = new Model({
       username,
-      email,
+      name: {
+        first_name: null,
+        last_name: null,
+      },
+      location: {
+        country: null,
+        city: null,
+        address: null,
+        zip_code: null,
+      },
+      contact_info: {
+        email: email,
+        phone_number: null,
+      },
       password,
+      orders: [],
+      payment_type: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
