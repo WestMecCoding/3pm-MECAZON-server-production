@@ -174,7 +174,7 @@ app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
     }).lean();
     if (user) {
       console.log(`Successfully retrieved user: ${user} with email: ${email}`);
-      res.status(200).json(user);
+      res.status(200).json(user._id);
     } else {
       throw new Error(
         `User with email ${email} not found or password is incorrect`
