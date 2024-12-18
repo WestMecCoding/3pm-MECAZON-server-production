@@ -37,7 +37,6 @@ const { hash } = require("crypto");
 const uriMap = {
   "3pm-client-MECAZON": process.env.MONGO_CLIENT_URI, // For Products collection
   "3pm-server-MECAZON": process.env.MONGO_SERVER_URI, // For Users and Employees collections
-  // MECAZONDB: process.env.MONGO_DEV_SERVER_URI, // For Users and Employees collections
 };
 
 // Store connections and models
@@ -136,10 +135,6 @@ app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
     const Model = await getModel(database, collection);
     console.log("Model retrieved, executing find query");
 
-    // const documents = await Model.find({}).lean();
-    // console.log("Query executed, document count:", documents.length);
-    // console.log(documents[1]._id);
-
     const user = await Model.findOne({ _id: userId }).lean();
     if (user) {
       console.log(`Successfully retrieved user: ${user} with ID: ${userId}`);
@@ -154,7 +149,7 @@ app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
   }
 });
 
-// GET route to find a specific user using email and password
+// GET route to find a user using email and password
 app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
   try {
     const { database, collection, email, password } = req.params;
@@ -186,6 +181,7 @@ app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
   }
 });
 
+// POST route to sign up a new user
 app.post("/sign-up/:database/:collection", async (req, res) => {
   try {
     const { database, collection } = req.params;
@@ -225,19 +221,12 @@ app.post("/sign-up/:database/:collection", async (req, res) => {
 app.get(
   "/retrieve-product/:database/:collection/:productId",
   async (req, res) => {
-    // app.get("/retrieve-user/:user-id", async (req, res) => {
     try {
       const { database, collection, productId } = req.params;
-      // const database = "MECAZONDB";
-      // const collection = "Users";
       console.log("GET request received for:", { database, collection });
 
       const Model = await getModel(database, collection);
       console.log("Model retrieved, executing find query");
-
-      // const documents = await Model.find({}).lean();
-      // console.log("Query executed, document count:", documents.length);
-      // console.log(documents[1]._id);
 
       const product = await Model.findOne({ _id: productId }).lean();
       if (product) {
@@ -336,7 +325,7 @@ app.post(
       });
 
       const UserModel = await getModel(database, collection);
-      const ProductModel = await getModel("MECAZONDB", "Products");
+      const ProductModel = await getModel("3pm-client-MECAZON", "products");
 
       // Retrieve the user and product documents
       const user = await UserModel.findOne({ _id: userId }).lean();
@@ -432,23 +421,6 @@ async function startServer() {
       client: process.env.MONGO_CLIENT_URI,
       server: process.env.MONGO_SERVER_URI,
     });
-
-    // Only test ProductsDB for now since we only have Products schema
-    // const testDatabases = ["ProductsDB"];
-    // for (const dbName of testDatabases) {
-    //   const connection = await getConnection(dbName);
-    //   console.log(`Successfully connected to MongoDB database: ${dbName}`);
-
-    //   // Only test Products collection
-    //   const testCollections = ["Products"];
-    //   for (const collectionName of testCollections) {
-    //     const Model = await getModel(dbName, collectionName);
-    //     const count = await Model.estimatedDocumentCount();
-    //     console.log(
-    //       `Found approximately ${count} documents in ${collectionName} collection of ${dbName}`
-    //     );
-    //   }
-    // }
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);

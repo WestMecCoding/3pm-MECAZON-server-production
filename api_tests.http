@@ -22,7 +22,7 @@ GET {{baseUrl}}/retrieve-user/3pm-server-MECAZON/users/{{userId}}
 Content-Type: application/json
 
 ###
-@productId = 6761fbf603d52a12492388b4
+@productId = 6762101591082b735a40df8d
 
 POST {{baseUrl}}/add-to-cart/3pm-server-MECAZON/users/{{userId}}/{{productId}}
 Content-Type: application/json
