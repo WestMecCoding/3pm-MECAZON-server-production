@@ -327,24 +327,73 @@ app.post("/add-employee/:database/:collection", async (req, res) => {
 });
 
 // POST route to add a product to the user's cart
+// app.post(
+//   "/add-to-cart/:database/:collection/:userId/:productId",
+//   async (req, res) => {
+//     try {
+//       const { database, collection, userId, productId } = req.params;
+//       console.log("POST request received for:", {
+//         database,
+//         collection,
+//         userId,
+//         productId,
+//       });
+
+//       const UserModel = await getModel(database, collection);
+//       const ProductModel = await getModel("3pm-client-MECAZON", "products");
+
+//       // Retrieve the user and product documents
+//       const user = await UserModel.findOne({ _id: userId }).lean();
+//       const product = await ProductModel.findOne({ _id: productId }).lean();
+
+//       if (!user) {
+//         return res
+//           .status(404)
+//           .json({ message: `User with ID ${userId} not found` });
+//       }
+
+//       if (!product) {
+//         return res
+//           .status(404)
+//           .json({ message: `Product with ID ${productId} not found` });
+//       }
+
+//       // Add the product to the user's cart
+//       const updatedCart = user.cart || [];
+//       updatedCart.push(product);
+
+//       // Update the user document in the database
+//       await UserModel.updateOne(
+//         { _id: userId },
+//         { $set: { cart: updatedCart } }
+//       );
+
+//       res.status(200).json({ message: "Product added to cart successfully" });
+//     } catch (err) {
+//       console.error("Error in POST route:", err);
+//       res.status(500).json({ error: err.message });
+//     }
+//   }
+// );
+
+
+// POST route to ada an order to the users profile
 app.post(
-  "/add-to-cart/:database/:collection/:userId/:productId",
+  "/checkout-order/:database/:collection/:userId/",
   async (req, res) => {
     try {
-      const { database, collection, userId, productId } = req.params;
+      const { database, collection, userId } = req.params;
+      const {order} = req.body;
       console.log("POST request received for:", {
         database,
         collection,
         userId,
-        productId,
       });
 
       const UserModel = await getModel(database, collection);
-      const ProductModel = await getModel("3pm-client-MECAZON", "products");
 
-      // Retrieve the user and product documents
+      // Retrieve the user
       const user = await UserModel.findOne({ _id: userId }).lean();
-      const product = await ProductModel.findOne({ _id: productId }).lean();
 
       if (!user) {
         return res
@@ -352,29 +401,26 @@ app.post(
           .json({ message: `User with ID ${userId} not found` });
       }
 
-      if (!product) {
-        return res
-          .status(404)
-          .json({ message: `Product with ID ${productId} not found` });
-      }
-
-      // Add the product to the user's cart
-      const updatedCart = user.cart || [];
-      updatedCart.push(product);
+      // Add the order to the user's profile
+      const updatedOrders = user.orders || [];
+      updatedOrders.push(order);
 
       // Update the user document in the database
       await UserModel.updateOne(
         { _id: userId },
-        { $set: { cart: updatedCart } }
+        { $set: { orders: updatedOrders } }
       );
 
-      res.status(200).json({ message: "Product added to cart successfully" });
+      res.status(200).json({ message: "Order added to user profile successfully" });
     } catch (err) {
       console.error("Error in POST route:", err);
       res.status(500).json({ error: err.message });
     }
   }
 );
+
+
+
 
 // DELETE route to remove a document by ID
 app.delete("/delete/:database/:collection/:id", async (req, res) => {
