@@ -188,7 +188,7 @@ Content-Type: application/json
 }
 
 ###
-@id=67626a7f5f7907fdcbf0550e
+@id=67625a7e72aaa9c016896b05
 # Delete a User (Replace {user_id} with an actual ID)
-DELETE {{baseUrl}}/delete/3pm-server-MECAZON/employees/{{id}}
+DELETE {{baseUrl}}/delete/3pm-server-MECAZON/users/{{id}}
 Content-Type: application/json

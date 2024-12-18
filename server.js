@@ -137,27 +137,22 @@ app.get("/find/:database/:collection", async (req, res) => {
 // used for testing
 // GET route to find a specific user using id
 app.get("/retrieve-user/:database/:collection/:userId", async (req, res) => {
+  // app.get("/retrieve-user/:user-id", async (req, res) => {
   try {
     const { database, collection, userId } = req.params;
-    console.log("GET request received for:", { database, collection, userId });
+    console.log("GET request received for:", { database, collection });
 
     const Model = await getModel(database, collection);
     console.log("Model retrieved, executing find query");
 
-    let user = await Model.findOne({ _id: userId }).lean();
-    if (!user) {
-      console.log(`User not found in ${collection}, searching in the other collection`);
-      const otherCollection = collection === 'users' ? 'employees' : 'users';
-      const OtherModel = await getModel(database, otherCollection);
-      user = await OtherModel.findOne({ _id: userId }).lean();
-    }
-
+    const user = await Model.findOne({ _id: userId }).lean();
     if (user) {
       console.log(`Successfully retrieved user: ${user} with ID: ${userId}`);
-      res.status(200).json(user);
     } else {
-      throw new Error(`User with ID ${userId} not found in both collections`);
+      throw new Error(`User with ID ${userId} not found`);
     }
+
+    res.status(200).json(user);
   } catch (err) {
     console.error("Error in GET route:", err);
     res.status(500).json({ error: err.message });
