@@ -185,19 +185,19 @@ app.get("/log-in/:database/:collection/:email/:password", async (req, res) => {
 app.post("/sign-up/:database/:collection", async (req, res) => {
   try {
     const { database, collection } = req.params;
-    const { username, contact_info, password } = req.body;
+    const { username, email, password } = req.body;
 
-    console.log("POST request received for:", { database, collection, email: contact_info.email });
+    // console.log("POST request received for:", { database, collection, email });
 
     const Model = await getModel(database, collection);
     console.log("Model retrieved, executing save query");
 
     // Check if a user with the same email already exists
     const existingUser = await Model.findOne({
-      "contact_info.email": contact_info.email,
+      "contact_info.email": email,
     }).lean();
     if (existingUser) {
-      throw new Error(`User with email ${contact_info.email} already exists`);
+      throw new Error(`User with email ${email} already exists`);
     }
 
     const newUser = new Model({
@@ -209,7 +209,7 @@ app.post("/sign-up/:database/:collection", async (req, res) => {
     });
     await newUser.save();
 
-    console.log(`Successfully created user: ${newUser} with email: ${contact_info.email}`);
+    console.log(`Successfully created user: ${newUser} with email: ${email}`);
     res.status(201).json(newUser);
   } catch (err) {
     console.error("Error in POST route:", err);
